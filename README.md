@@ -1,2 +1,2 @@
 # codingchallenges
-my own implemtnations of https://codingchallenges.fyi
+my own implementations of https://codingchallenges.fyi
