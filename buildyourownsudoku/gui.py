@@ -80,7 +80,7 @@ def main():
             if(event.type == KEYDOWN):
                 mouse_pos = pygame.mouse.get_pos()
                 for t in ts:
-                    if t.collide_point(mouse_pos):
+                    if t.collide_point(mouse_pos) and t.state == False:
                         if event.key in keymap:
                             t.value = keymap[event.key]
                             t.draw(screen, font2)
