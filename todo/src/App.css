@@ -1,0 +1,33 @@
+.App {
+  text-align: center;
+}
+
+input {
+  padding: 8px;
+  margin: 10px;
+}
+
+button {
+  padding: 8px;
+  margin-left: 5px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 10px 0;
+}
+
+button {
+  background-color: #ff6347;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ff4500;
+}
