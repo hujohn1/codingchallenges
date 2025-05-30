@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import type {ProfileData, PlaylistData} from './types.ts'
+import type {ProfileData, PlaylistData} from './types/types.tsx'
+import {WebPlayer} from './components/WebPlayer.jsx'
 
-const clientId = '60ff40a659e340c683ceba3cd2b58e90'
+const clientId = import.meta.env.REACT_APP_CLIENT_ID
 const redirectUrl = 'http://localhost:5173'
-const BASE_URL = "https://accounts.spotify.com"
 const authUrl = new URL("https://accounts.spotify.com/authorize")
 
 const CV_LENGTH = 86 //code verifier length
-const SCOPE = 'user-read-private user-read-email' //enabled access scopes
+const SCOPE = 'user-read-private user-read-email streaming user-read-playback-state user-modify-playback-state' //enabled access scopes
 
-//spotify boilerplate
+//Spotify boilerplate
 function generateCodeVerifier(len: number){
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   const values = crypto.getRandomValues(new Uint8Array(len));
@@ -76,17 +76,10 @@ async function getAllPlaylists(access_token: string): Promise<PlaylistData>{
 }
 
 
-async function getPlaylist(playlist_id: number){
-  const body = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}`, {
-    method: "GET"
-  });
-  return body.json();
-}
-
-
 function App() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [playlists, setPlaylists] = useState<any>([])
+  const [token, setToken] = useState('')
+
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -95,10 +88,9 @@ function App() {
       if (code) {
         const tok = await getToken(code);
         if (tok) {
+          setToken(tok)
           const data = await getProfile(tok);
           setProfileData(data);
-          const res = await getAllPlaylists(tok);
-          setPlaylists(res.items)
         }
       } else {
         const codeVerifier = generateCodeVerifier(CV_LENGTH);
@@ -126,20 +118,11 @@ function App() {
     <>
     <h1 className="font-bold">Spotify Playlist Web</h1>
     {profileData && (
-      <div>{ profileData.country} { profileData.display_name}
+      <div>Logged in as { profileData.country} { profileData.display_name}
       </div>)}  
-    <ul>
-      {playlists.map((p)=>{
-        return (
-        <li key={p.id}>
-            {p.title}
-            <img src={p.images[0].url} width={p.images[0].width * 0.5} height={p.images[0].height * 0.5}/>
-        </li>
-        );
-        }
-      )}
-    </ul>
+      {token && <WebPlayer access_token={token}/>}
     </>
+    
     )
 }
 
